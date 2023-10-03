@@ -3,7 +3,9 @@ import type {StackScreenProps} from '@react-navigation/stack';
 
 export type RootStackParamList = {
   Home: undefined;
-  Profile: undefined;
+  DiaryDetail: undefined;
+  DiaryRecord: undefined;
+  DiaryEdit: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

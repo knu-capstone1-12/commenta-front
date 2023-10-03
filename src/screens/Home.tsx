@@ -1,19 +1,23 @@
 import React from 'react';
-import {View, Button} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {StyleSheet} from 'react-native';
+import {VStack} from '@gluestack-ui/themed';
+import DiaryCalendar from '../components/DiaryCalendar';
 
 const Home = () => {
-  const navigation = useNavigation();
   return (
-    <View>
-      <Button
-        title="Profile"
-        onPress={() => {
-          navigation.navigate('Profile');
-        }}
+    <VStack style={styles.vStackStyle}>
+      <DiaryCalendar
+        onDateClick={({day, month, year}) => console.log(day, month, year)}
       />
-    </View>
+    </VStack>
   );
 };
+
+const styles = StyleSheet.create({
+  vStackStyle: {
+    width: '100%',
+    maxWidth: 400,
+  },
+});
 
 export default Home;
