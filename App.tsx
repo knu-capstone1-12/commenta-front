@@ -1,28 +1,23 @@
 import React from 'react';
-import {
-  AddIcon,
-  Button,
-  ButtonIcon,
-  ButtonText,
-  config,
-  GluestackUIProvider,
-  VStack,
-} from '@gluestack-ui/themed';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import Home from './src/screens/Home';
+import Profile from './src/screens/Profile';
+import {config, GluestackUIProvider} from '@gluestack-ui/themed';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
     <GluestackUIProvider config={config.theme}>
-      <VStack>
-        <Button
-          size="md"
-          variant="solid"
-          action="primary"
-          isDisabled={false}
-          isFocusVisible={false}>
-          <ButtonText>Add </ButtonText>
-          <ButtonIcon as={AddIcon} />
-        </Button>
-      </VStack>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Profile" component={Profile} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </GluestackUIProvider>
   );
-}
+};
+
+export default App;
