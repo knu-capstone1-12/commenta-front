@@ -21,7 +21,8 @@
     "experimentalDecorators": true,
     "inlineSources": true,
     "resolveJsonModule": true,
-    "jsx": "react"
+    "jsx": "react",
+    "typeRoots": ["./src/types", "node_modules/@types"]
   },
   "include": ["./src/**/*.tsx", "./src/**/*.ts"],
   "exclude": ["node_modules", ".git", ".vscode", ".DS_Store"]

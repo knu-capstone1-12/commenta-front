@@ -1,14 +1,12 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {VStack} from '@gluestack-ui/themed';
-import DiaryCalendar from '../components/DiaryCalendar';
+import Calendar from '../components/Calendar';
 
 const Home = () => {
   return (
     <VStack style={styles.vStackStyle}>
-      <DiaryCalendar
-        onDateClick={({day, month, year}) => console.log(day, month, year)}
-      />
+      <Calendar onDateClick={date => console.log(date)} />
     </VStack>
   );
 };
