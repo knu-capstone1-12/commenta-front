@@ -1,14 +1,19 @@
 import React from 'react';
 import {Text, View, Button} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {Box, VStack} from '@gluestack-ui/themed';
+import {RootStackParamList} from 'types/navigation';
 
 const Profile = () => {
   const navigation = useNavigation();
 
+  const {
+    params: {id},
+  } = useRoute<RouteProp<RootStackParamList, 'DiaryDetail'>>();
+
   return (
     <View>
-      <Text>Profile 화면입니다.</Text>
+      <Text>{new Date(id).toDateString()}의 일기</Text>
       <Button
         title="Back"
         onPress={() => {

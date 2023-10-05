@@ -4,7 +4,7 @@ import {
   formatDateToMonthYear,
   getDaysOfMonth,
   weekDaysList,
-} from '../util/dateUtil';
+} from 'util/dateUtil';
 import LeftArrow from '../../asset/left-arrow.svg';
 import RightArrow from '../../asset/right-arrow.svg';
 
