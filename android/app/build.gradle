@@ -118,6 +118,9 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    implementation project(':react-native-fs')
+    implementation project(':react-native-screens')
+    implementation project(':react-native-gesture-handler')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

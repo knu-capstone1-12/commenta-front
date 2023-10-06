@@ -8,7 +8,15 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
+import java.util.Arrays; 
 import java.util.List;
+import com.rnfs.RNFSPackage;
+import com.facebook.react.shell.MainReactPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import com.horcrux.svg.SvgPackage;
+import com.swmansion.rnscreens.RNScreensPackage;
+import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
+
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -21,11 +29,14 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
-          @SuppressWarnings("UnnecessaryLocalVariable")
-          List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // packages.add(new MyReactNativePackage());
-          return packages;
+          return Arrays.<ReactPackage>asList(
+            new MainReactPackage(), 
+            new RNFSPackage(),
+            new RNFetchBlobPackage(),
+            new SvgPackage(),
+            new RNScreensPackage(),
+            new SafeAreaContextPackage()
+          );  // <-- Close the list and the return statement
         }
 
         @Override
@@ -57,6 +68,7 @@ public class MainApplication extends Application implements ReactApplication {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();
     }
-    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    // If you're using ReactNativeFlipper, make sure to import it at the top
+    // ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 }

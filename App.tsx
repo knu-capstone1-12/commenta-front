@@ -5,12 +5,16 @@ import Home from './src/screens/Home';
 import DiaryDetail from './src/screens/DiaryDetail';
 import DiaryRecord from './src/screens/DiaryRecord';
 import DiaryEdit from './src/screens/DiaryEdit';
-
 import {config, GluestackUIProvider} from '@gluestack-ui/themed';
+import {getApiUrlPrefix} from './src/util/mockUtil';
 
 const Stack = createStackNavigator();
 
 const App = () => {
+  fetch(getApiUrlPrefix() + '/voiceToText', {method: 'POST'})
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(e => console.log(e));
   return (
     <GluestackUIProvider config={config.theme}>
       <NavigationContainer>
