@@ -13,7 +13,7 @@ const useMicrophone = () => {
       const platformPermissions =
         Platform.OS === 'ios'
           ? PERMISSIONS.IOS.MICROPHONE
-          : PERMISSIONS.ANDROID.RECORD_AUDIO;
+          : PERMISSIONS?.ANDROID?.RECORD_AUDIO;
 
       const requestMicrophonePermission = async () => {
         try {

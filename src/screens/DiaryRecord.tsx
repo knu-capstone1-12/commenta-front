@@ -8,29 +8,46 @@ import {
   ScrollView,
 } from 'react-native';
 import {VStack} from '@gluestack-ui/themed';
-import AudioRecord from 'react-native-audio-record';
 import RNFS from 'react-native-fs';
+import AudioRecorderPlayer, {
+  AVEncoderAudioQualityIOSType,
+  AVEncodingOption,
+  AudioEncoderAndroidType,
+  AudioSourceAndroidType,
+} from 'react-native-audio-recorder-player';
 import RNFetchBlob from 'rn-fetch-blob';
 import useMicrophone from 'hooks/useMicrophone';
 import MicSVG from '../../asset/mic.svg';
 
+const audioRecorderPlayer = new AudioRecorderPlayer();
 const DiaryRecord = () => {
   const [recording, setRecording] = useState(false);
   const [processedText, setProcessedText] = useState('');
+  const [uri, setUri] = useState('');
   const hasMicrophonePermission = useMicrophone();
 
-  const audioOptions = {
-    sampleRate: 44100,
-    channels: 1,
-    bitsPerSample: 16,
-    wavFile: 'record.wav', // 녹음 파일 이름
-  };
+  const startRecording = async () => {
+    try {
+      const audioSet = {
+        AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
+        AudioSourceAndroid: AudioSourceAndroidType.MIC,
+        AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
+        AVNumberOfChannelsKeyIOS: 2,
+        AVFormatIDKeyIOS: AVEncodingOption.aac,
+      };
+      const dirs = RNFetchBlob.fs.dirs;
+      const path = Platform.select({
+        ios: 'hello.mp3',
+        android: `${dirs.CacheDir}/hello.mp3`,
+      });
 
-  AudioRecord.init(audioOptions);
-
-  const startRecording = () => {
-    setRecording(true);
-    AudioRecord.start();
+      const newuri = await audioRecorderPlayer.startRecorder(path, audioSet);
+      setRecording(true);
+      console.log('newuri' + newuri);
+      setUri(newuri);
+    } catch (err: any) {
+      console.error('Error in startRecording:', err.message || err);
+    }
   };
 
   const stopRecording = async () => {
@@ -39,20 +56,11 @@ const DiaryRecord = () => {
     }
 
     try {
-      const audioFilePath = await AudioRecord.stop();
+      const result = await audioRecorderPlayer.stopRecorder();
       setRecording(false);
+      console.log(result);
 
-      console.log(audioFilePath);
-
-      let fileName = audioFilePath.split('/').pop();
-      if (!fileName) {
-        fileName = 'default.wav';
-      }
-
-      const platformSpecificFilePath =
-        Platform.OS === 'android' ? 'file://' + audioFilePath : audioFilePath;
-
-      RNFetchBlob.fetch(
+      const response = await RNFetchBlob.fetch(
         'POST',
         'https://mped121b34f40f616d64.free.beeceptor.com/api/voiceToText',
         {
@@ -62,36 +70,30 @@ const DiaryRecord = () => {
         [
           {
             name: 'files',
-            filename: fileName,
+            filename: 'voice',
             type: 'audio/wav',
-            data: RNFetchBlob.wrap(platformSpecificFilePath),
+            data: RNFetchBlob.wrap(uri),
           },
         ],
-      )
-        .then(response => {
-          if (response.info().status === 200) {
-            console.log('FILES UPLOADED!');
-            setProcessedText(response.json().text);
-          } else {
-            console.error(response);
-            console.log('SERVER ERROR');
-          }
-        })
-        .catch(err => {
-          console.log('UPLOAD ERROR:', err);
-        })
-        .finally(() => {
-          // 성공 또는 실패와 관계없이 파일 삭제
-          RNFS.unlink(audioFilePath)
-            .then(() => {
-              console.log('FILE DELETED SUCCESSFULLY');
-            })
-            .catch(err => {
-              console.log('ERROR DELETING FILE:', err);
-            });
-        });
+      );
+
+      if (response.info().status === 200) {
+        console.log('FILES UPLOADED!');
+        const jsonResponse = response.json();
+        setProcessedText(jsonResponse.text);
+      } else {
+        console.error(response);
+        console.log('SERVER ERROR');
+      }
     } catch (err) {
-      console.log('ERROR:', err);
+      console.log('UPLOAD ERROR:', err);
+    } finally {
+      try {
+        await RNFS.unlink(uri);
+        console.log('FILE DELETED SUCCESSFULLY');
+      } catch (err) {
+        console.log('ERROR DELETING FILE:', err);
+      }
     }
   };
 

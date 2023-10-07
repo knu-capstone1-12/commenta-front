@@ -14,9 +14,10 @@ import com.rnfs.RNFSPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.horcrux.svg.SvgPackage;
-import com.swmansion.rnscreens.RNScreensPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
-
+import com.swmansion.gesturehandler.RNGestureHandlerPackage;
+import com.zoontek.rnpermissions.RNPermissionsPackage;
+import com.dooboolab.audiorecorderplayer.RNAudioRecorderPlayerPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -34,8 +35,11 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFSPackage(),
             new RNFetchBlobPackage(),
             new SvgPackage(),
-            new RNScreensPackage(),
-            new SafeAreaContextPackage()
+            new SafeAreaContextPackage(),
+            new com.swmansion.rnscreens.RNScreensPackage(),
+            new RNGestureHandlerPackage(),
+            new RNPermissionsPackage(),
+            new RNAudioRecorderPlayerPackage()
           );  // <-- Close the list and the return statement
         }
 
