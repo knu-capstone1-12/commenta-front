@@ -2,19 +2,13 @@ import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
-  Platform,
   TouchableOpacity,
   Text,
   ScrollView,
 } from 'react-native';
 import {VStack} from '@gluestack-ui/themed';
 import RNFS from 'react-native-fs';
-import AudioRecorderPlayer, {
-  AVEncoderAudioQualityIOSType,
-  AVEncodingOption,
-  AudioEncoderAndroidType,
-  AudioSourceAndroidType,
-} from 'react-native-audio-recorder-player';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import RNFetchBlob from 'rn-fetch-blob';
 import useMicrophone from 'hooks/useMicrophone';
 import MicSVG from '../../asset/mic.svg';
@@ -28,25 +22,13 @@ const DiaryRecord = () => {
 
   const startRecording = async () => {
     try {
-      const audioSet = {
-        AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
-        AudioSourceAndroid: AudioSourceAndroidType.MIC,
-        AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
-        AVNumberOfChannelsKeyIOS: 2,
-        AVFormatIDKeyIOS: AVEncodingOption.aac,
-      };
-      const dirs = RNFetchBlob.fs.dirs;
-      const path = Platform.select({
-        ios: 'hello.mp3',
-        android: `${dirs.CacheDir}/hello.mp3`,
-      });
-
-      const newuri = await audioRecorderPlayer.startRecorder(path, audioSet);
+      const newuri = await audioRecorderPlayer.startRecorder();
       setRecording(true);
       console.log('newuri' + newuri);
       setUri(newuri);
     } catch (err: any) {
       console.error('Error in startRecording:', err.message || err);
+      console.error(err);
     }
   };
 
