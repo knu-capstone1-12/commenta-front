@@ -5,17 +5,21 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
+  Platform,
 } from 'react-native';
-import {VStack} from '@gluestack-ui/themed';
+import {Button, ButtonText, VStack} from '@gluestack-ui/themed';
 import RNFS from 'react-native-fs';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import RNFetchBlob from 'rn-fetch-blob';
 import useMicrophone from 'hooks/useMicrophone';
 import MicSVG from '../../asset/mic.svg';
+import {useNavigation} from '@react-navigation/native';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const DiaryRecord = () => {
+  const {navigate} = useNavigation();
   const [recording, setRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [processedText, setProcessedText] = useState('');
   const [uri, setUri] = useState('');
   const hasMicrophonePermission = useMicrophone();
@@ -40,7 +44,9 @@ const DiaryRecord = () => {
     try {
       const result = await audioRecorderPlayer.stopRecorder();
       setRecording(false);
+      setIsProcessing(true);
       console.log(result);
+      const realPath = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
 
       const response = await RNFetchBlob.fetch(
         'POST',
@@ -54,7 +60,7 @@ const DiaryRecord = () => {
             name: 'files',
             filename: 'voice',
             type: 'audio/wav',
-            data: RNFetchBlob.wrap(uri),
+            data: RNFetchBlob.wrap(decodeURIComponent(realPath)),
           },
         ],
       );
@@ -70,6 +76,7 @@ const DiaryRecord = () => {
     } catch (err) {
       console.log('UPLOAD ERROR:', err);
     } finally {
+      setIsProcessing(false);
       try {
         await RNFS.unlink(uri);
         console.log('FILE DELETED SUCCESSFULLY');
@@ -85,11 +92,17 @@ const DiaryRecord = () => {
         <>
           <View style={styles.recordingButtonContainer}>
             <TouchableOpacity
-              onPress={recording ? stopRecording : startRecording}>
+              onPress={
+                isProcessing
+                  ? () => {}
+                  : recording
+                  ? stopRecording
+                  : startRecording
+              }>
               <View
                 style={[
                   styles.recordingButton,
-                  recording && styles.recordingOnProcess,
+                  (recording || isProcessing) && styles.recordingOnProcess,
                 ]}>
                 <MicSVG />
               </View>
@@ -103,6 +116,8 @@ const DiaryRecord = () => {
                   ? '녹음을 기다리고 있습니다'
                   : recording
                   ? '녹음중...'
+                  : isProcessing
+                  ? '음성 인식 처리중...'
                   : processedText}
               </Text>
             </ScrollView>
@@ -111,6 +126,18 @@ const DiaryRecord = () => {
       ) : (
         <Text>no mic!!</Text>
       )}
+      <View style={styles.bottomButtonContainer}>
+        <Button
+          size="md"
+          variant="solid"
+          action="positive"
+          isDisabled={recording || isProcessing}
+          onPress={() => {
+            navigate('DiaryEdit');
+          }}>
+          <ButtonText>다음</ButtonText>
+        </Button>
+      </View>
     </VStack>
   );
 };
@@ -121,6 +148,15 @@ const styles = StyleSheet.create({
     gap: 15,
     flexDirection: 'column',
     alignItems: 'center',
+    position: 'relative',
+  },
+  bottomButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    padding: 20,
   },
   recordingButtonContainer: {
     justifyContent: 'flex-start',
@@ -138,7 +174,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 119, 230, 0.5)',
   },
   permissionText: {color: 'red', fontSize: 16},
-  textContainer: {flex: 1, width: 320, flexDirection: 'column', gap: 25},
+  textContainer: {
+    flex: 1,
+    width: 320,
+    flexDirection: 'column',
+    gap: 25,
+    marginBottom: 60,
+  },
   STTTitle: {},
   STTText: {},
 });
