@@ -131,9 +131,9 @@ const DiaryRecord = () => {
           size="md"
           variant="solid"
           action="positive"
-          isDisabled={recording || isProcessing}
+          isDisabled={recording || isProcessing || processedText.length === 0}
           onPress={() => {
-            navigate('DiaryEdit');
+            navigate('DiaryEdit', {text: processedText});
           }}>
           <ButtonText>다음</ButtonText>
         </Button>
