@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {
   formatDateToMonthYear,
@@ -7,6 +7,9 @@ import {
 } from 'util/dateUtil';
 import LeftArrow from '../../asset/left-arrow.svg';
 import RightArrow from '../../asset/right-arrow.svg';
+import Diary from 'model/Diary';
+import {useDatabase} from '@nozbe/watermelondb/hooks';
+import {Q} from '@nozbe/watermelondb';
 
 interface Props {
   onDateClick: (date: Date) => void;
@@ -14,6 +17,32 @@ interface Props {
 
 const Calendar = ({onDateClick}: Props) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [thisMonthDiaries, setThisMonthDiaries] = useState<Diary[]>([]);
+
+  const database = useDatabase();
+
+  const thisYear = currentDate.getFullYear();
+  const thisMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+
+  const fetchThisMonthDiaries = useCallback(async () => {
+    const dateString = `${thisYear}-${thisMonth}-__`;
+    let diaries: Diary[] = [];
+    try {
+      diaries = await database
+        .get<Diary>('diaries')
+        .query(Q.where('date', Q.like(dateString)));
+    } catch (e) {
+      console.error('error fetching diary', e);
+    }
+    setThisMonthDiaries(diaries);
+  }, [database, thisMonth, thisYear]);
+
+  useEffect(() => {
+    const loadDiaries = async () => {
+      await fetchThisMonthDiaries();
+    };
+    loadDiaries();
+  }, [fetchThisMonthDiaries]);
 
   const onPrevMonth = () => {
     setCurrentDate(
@@ -66,11 +95,26 @@ const Calendar = ({onDateClick}: Props) => {
                         new Date(
                           currentDate.getFullYear(),
                           currentDate.getMonth(),
-                          day + 1,
+                          day,
                         ),
                       )
                     }>
-                    <Text style={styles.dayText}>{day}</Text>
+                    <Text
+                      style={[
+                        styles.dayText,
+                        thisMonthDiaries &&
+                          thisMonthDiaries.some(diary =>
+                            new RegExp(
+                              `${thisYear}-${thisMonth}-${String(day).padStart(
+                                2,
+                                '0',
+                              )}`,
+                            ).test(diary.date),
+                          ) &&
+                          styles.hasDiary,
+                      ]}>
+                      {day}
+                    </Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -144,6 +188,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontStyle: 'normal',
     fontWeight: '600',
+  },
+  hasDiary: {
+    color: '#FF0000',
   },
 });
 

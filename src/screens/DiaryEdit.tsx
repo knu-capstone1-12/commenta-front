@@ -15,11 +15,16 @@ import {
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {RootStackParamList} from 'types/navigation';
+import {useDatabase} from '@nozbe/watermelondb/hooks';
+import Diary from 'model/Diary';
+import {Q} from '@nozbe/watermelondb';
+import {formatDateToYYMMDD} from 'util/dateUtil';
 
 const DiaryEdit = () => {
   const {navigate} = useNavigation();
   const [title, setTitle] = useState('');
   const [mainText, setMainText] = useState('');
+  const database = useDatabase();
 
   const {
     params: {text: passedText},
@@ -29,8 +34,29 @@ const DiaryEdit = () => {
     setMainText(passedText);
   }, [passedText]);
 
-  const handleNextButtonClick = () => {
-    navigate('Home');
+  const handleNextButtonClick = async () => {
+    await database.write(async () =>
+      database
+        .get<Diary>('diaries')
+        .query(Q.where('date', Q.eq(formatDateToYYMMDD(new Date()))))
+        .then(diaries =>
+          diaries.map(async diary => await diary.destroyPermanently()),
+        )
+        .finally(async () => {
+          let newDiary;
+          try {
+            newDiary = await database.get<Diary>('diaries').create(diary => {
+              diary.title = title;
+              diary.content = mainText;
+              diary.date = formatDateToYYMMDD(new Date());
+            });
+          } catch (e) {
+            console.error(e);
+          }
+          console.log(newDiary);
+          navigate('Home');
+        }),
+    );
   };
 
   return (
@@ -69,7 +95,7 @@ const DiaryEdit = () => {
           variant="solid"
           action="positive"
           isDisabled={title.length === 0 || mainText.length === 0}
-          onPress={handleNextButtonClick}>
+          onPress={() => handleNextButtonClick()}>
           <ButtonText>다음</ButtonText>
         </Button>
       </View>
