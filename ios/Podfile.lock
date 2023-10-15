@@ -489,6 +489,8 @@ PODS:
     - React-jsi (= 0.72.5)
     - React-logger (= 0.72.5)
     - React-perflogger (= 0.72.5)
+  - RealmJS (12.2.1):
+    - React
   - rn-fetch-blob (0.12.0):
     - React-Core
   - RNAudioRecorderPlayer (3.6.0):
@@ -535,7 +537,11 @@ PODS:
     - React-RCTImage
   - RNSVG (13.14.0):
     - React-Core
+  - simdjson (3.1.0-wmelon1)
   - SocketRocket (0.6.1)
+  - WatermelonDB (0.27.0):
+    - React
+    - simdjson
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -605,6 +611,7 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RealmJS (from `../node_modules/realm`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNAudioRecorderPlayer (from `../node_modules/react-native-audio-recorder-player`)
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
@@ -614,6 +621,8 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - "simdjson (from `../node_modules/@nozbe/simdjson`)"
+  - "WatermelonDB (from `../node_modules/@nozbe/watermelondb`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -715,6 +724,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RealmJS:
+    :path: "../node_modules/realm"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
   RNAudioRecorderPlayer:
@@ -733,6 +744,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  simdjson:
+    :path: "../node_modules/@nozbe/simdjson"
+  WatermelonDB:
+    :path: "../node_modules/@nozbe/watermelondb"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -789,6 +804,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: cc32add98c45c5df18436a6a52a7e1f6edec102c
   React-utils: 7a9918a1ffdd39aba67835d42386f592ea3f8e76
   ReactCommon: 91ece8350ebb3dd2be9cef662abd78b6948233c0
+  RealmJS: b36dae5c0def204602827884512252a320332c69
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNAudioRecorderPlayer: 4690a7cd9e4fd8e58d9671936a7bc3b686e59051
   RNCMaskedView: 949696f25ec596bfc697fc88e6f95cf0c79669b6
@@ -798,10 +814,12 @@ SPEC CHECKSUMS:
   RNReanimated: ab2e96c6d5591c3dfbb38a464f54c8d17fb34a87
   RNScreens: 85d3880b52d34db7b8eeebe2f1a0e807c05e69fa
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
+  simdjson: e6bfae9ce4bcdc80452d388d593816f1ca2106f3
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  WatermelonDB: 0372787937ef6eaaa8062badda7fb013ab415334
   Yoga: 86fed2e4d425ee4c6eab3813ba1791101ee153c6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 387d30cb1ea089d39eeea9adcb4ee68a94047c67
+PODFILE CHECKSUM: 27fafd9de6e39966735641983a947eeb34a59105
 
 COCOAPODS: 1.13.0

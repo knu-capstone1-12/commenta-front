@@ -12,6 +12,7 @@
   "dependencies": {
     "@gluestack-style/react": "^0.2.51",
     "@gluestack-ui/themed": "^0.1.53",
+    "@nozbe/watermelondb": "^0.27.0",
     "@react-native-masked-view/masked-view": "^0.2.9",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/stack": "^6.3.18",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@babel/plugin-proposal-decorators": "^7.23.2",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
     "@react-native/eslint-config": "^0.72.2",

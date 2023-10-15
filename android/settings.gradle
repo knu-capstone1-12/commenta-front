@@ -14,3 +14,5 @@ include ':react-native-permissions'
 project(':react-native-permissions').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-permissions/android')
 include ':react-native-audio-recorder-player'
 project(':react-native-audio-recorder-player').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-audio-recorder-player/android')
+include ':watermelondb-jsi'
+project(':watermelondb-jsi').projectDir = new File(rootProject.projectDir, '../node_modules/@nozbe/watermelondb/native/android-jsi')

@@ -18,6 +18,8 @@ import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import com.swmansion.gesturehandler.RNGestureHandlerPackage;
 import com.zoontek.rnpermissions.RNPermissionsPackage;
 import com.dooboolab.audiorecorderplayer.RNAudioRecorderPlayerPackage;
+import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
+import com.facebook.react.bridge.JSIModulePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -43,6 +45,10 @@ public class MainApplication extends Application implements ReactApplication {
           );  // <-- Close the list and the return statement
         }
 
+        @Override
+        protected JSIModulePackage getJSIModulePackage() {
+          return new WatermelonDBJSIPackage(); // ⬅️ This!
+        }
         @Override
         protected String getJSMainModuleName() {
           return "index";

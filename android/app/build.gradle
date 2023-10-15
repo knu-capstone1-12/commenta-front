@@ -81,6 +81,9 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    packagingOptions {
+        pickFirst '**/libc++_shared.so' // ⬅️ This (if missing)
+    }
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -123,6 +126,7 @@ dependencies {
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-permissions')
     implementation project(':react-native-audio-recorder-player')
+    implementation project(':watermelondb-jsi')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
