@@ -10,6 +10,7 @@ import RightArrow from '../../asset/right-arrow.svg';
 import Diary from 'model/Diary';
 import {useDatabase} from '@nozbe/watermelondb/hooks';
 import {Q} from '@nozbe/watermelondb';
+import {useIsFocused} from '@react-navigation/native';
 
 interface Props {
   onDateClick: (date: Date) => void;
@@ -20,6 +21,7 @@ const Calendar = ({onDateClick}: Props) => {
   const [thisMonthDiaries, setThisMonthDiaries] = useState<Diary[]>([]);
 
   const database = useDatabase();
+  const isFocused = useIsFocused();
 
   const thisYear = currentDate.getFullYear();
   const thisMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -42,7 +44,7 @@ const Calendar = ({onDateClick}: Props) => {
       await fetchThisMonthDiaries();
     };
     loadDiaries();
-  }, [fetchThisMonthDiaries]);
+  }, [fetchThisMonthDiaries, isFocused]);
 
   const onPrevMonth = () => {
     setCurrentDate(
