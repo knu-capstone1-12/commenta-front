@@ -15,7 +15,6 @@
 		7699B88040F8A987B510C191 /* libPods-commentaFE-commentaFETests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-commentaFE-commentaFETests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		ED2BE89D2AD1606600B7374C /* RNAudioRecorderPlayer.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = ED2BE89C2AD1606600B7374C /* RNAudioRecorderPlayer.xcworkspace */; };
-		EDDEC5972ADAD3C200087238 /* sqlite.db in Resources */ = {isa = PBXBuildFile; fileRef = EDDEC5962ADAD3C200087238 /* sqlite.db */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,7 +48,6 @@
 		ED2BE8822AD1542A00B7374C /* commentaFE-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "commentaFE-Bridging-Header.h"; sourceTree = "<group>"; };
 		ED2BE88B2AD1594A00B7374C /* libRNAudioRecorderPlayer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNAudioRecorderPlayer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED2BE89C2AD1606600B7374C /* RNAudioRecorderPlayer.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; name = RNAudioRecorderPlayer.xcworkspace; path = "../node_modules/react-native-audio-recorder-player/ios/RNAudioRecorderPlayer.xcworkspace"; sourceTree = "<group>"; };
-		EDDEC5962ADAD3C200087238 /* sqlite.db */ = {isa = PBXFileReference; lastKnownFileType = file; name = sqlite.db; path = commentaFE/www/sqlite.db; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +90,6 @@
 		13B07FAE1A68108700A75B9A /* commentaFE */ = {
 			isa = PBXGroup;
 			children = (
-				EDDEC5962ADAD3C200087238 /* sqlite.db */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -255,7 +252,6 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				ED2BE89D2AD1606600B7374C /* RNAudioRecorderPlayer.xcworkspace in Resources */,
-				EDDEC5972ADAD3C200087238 /* sqlite.db in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -753,7 +749,8 @@
 					"-ld_classic",
 					"-Wl",
 					"-ld_classic",
-					"-Wl -ld_classic ",
+					"-Wl",
+					"-ld_classic",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -833,7 +830,8 @@
 					"-ld_classic",
 					"-Wl",
 					"-ld_classic",
-					"-Wl -ld_classic ",
+					"-Wl",
+					"-ld_classic",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
