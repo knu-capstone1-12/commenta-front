@@ -26,8 +26,11 @@ const DiaryRecord = () => {
 
   const startRecording = async () => {
     try {
-      const newuri = await audioRecorderPlayer.startRecorder();
       setRecording(true);
+      const newuri = await audioRecorderPlayer.startRecorder(undefined, {
+        AudioSamplingRateAndroid: 48000,
+        AVSampleRateKeyIOS: 48000,
+      });
       console.log('newuri' + newuri);
       setUri(newuri);
     } catch (err: any) {
@@ -42,22 +45,22 @@ const DiaryRecord = () => {
     }
 
     try {
-      const result = await audioRecorderPlayer.stopRecorder();
       setRecording(false);
+      const result = await audioRecorderPlayer.stopRecorder();
       setIsProcessing(true);
       console.log(result);
       const realPath = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
 
       const response = await RNFetchBlob.fetch(
         'POST',
-        'https://mped121b34f40f616d64.free.beeceptor.com/api/voiceToText',
+        'http://155.230.34.223:7001/sttrec',
         {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
         },
         [
           {
-            name: 'files',
+            name: 'audio',
             filename: 'voice',
             type: 'audio/wav',
             data: RNFetchBlob.wrap(decodeURIComponent(realPath)),
@@ -68,6 +71,7 @@ const DiaryRecord = () => {
       if (response.info().status === 200) {
         console.log('FILES UPLOADED!');
         const jsonResponse = response.json();
+        console.log(jsonResponse);
         setProcessedText(jsonResponse.text);
       } else {
         console.error(response);
