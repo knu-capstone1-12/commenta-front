@@ -14,6 +14,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import useMicrophone from 'hooks/useMicrophone';
 import MicSVG from '../../asset/mic.svg';
 import {useNavigation} from '@react-navigation/native';
+import {REACT_APP_API_URL} from '@env';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const DiaryRecord = () => {
@@ -53,7 +54,7 @@ const DiaryRecord = () => {
 
       const response = await RNFetchBlob.fetch(
         'POST',
-        'http://155.230.34.223:7001/sttrec',
+        `${REACT_APP_API_URL}/sttrec`,
         {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',

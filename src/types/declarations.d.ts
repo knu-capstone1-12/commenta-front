@@ -8,3 +8,7 @@ declare module '*.svg' {
 declare module '*.jpg';
 declare module '*.jpeg';
 declare module '*.png';
+
+declare module '@env' {
+  export const REACT_APP_API_URL: string;
+}
