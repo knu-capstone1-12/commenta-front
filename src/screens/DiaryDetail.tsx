@@ -1,12 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  Image,
-} from 'react-native';
+import {Text, View, StyleSheet, ScrollView, Dimensions} from 'react-native';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {VStack} from '@gluestack-ui/themed';
 import {RootStackParamList} from 'types/navigation';
@@ -14,7 +7,7 @@ import {useDatabase} from '@nozbe/watermelondb/hooks';
 import Diary from 'model/Diary';
 import {Q} from '@nozbe/watermelondb';
 import {formatDateToYYMMDD} from 'util/dateUtil';
-import graphSample from '../../asset/sample.png';
+import EmotionScore from 'components/EmotionScore';
 
 const Profile = () => {
   const {
@@ -42,7 +35,7 @@ const Profile = () => {
       </View>
       <View style={style.emotionResultSection}>
         <Text style={style.componentTitle}>음성일기 감정분석 결과</Text>
-        <Image source={graphSample} />
+        <EmotionScore score={1.3} />
       </View>
       <View style={style.divider} />
       <View style={style.emotionResultSection}>
