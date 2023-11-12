@@ -8,6 +8,7 @@ import Diary from 'model/Diary';
 import {Q} from '@nozbe/watermelondb';
 import {formatDateToYYMMDD} from 'util/dateUtil';
 import EmotionScore from 'components/EmotionScore';
+import Sentiment from 'model/Sentiment';
 
 const Profile = () => {
   const {
@@ -15,6 +16,7 @@ const Profile = () => {
   } = useRoute<RouteProp<RootStackParamList, 'DiaryDetail'>>();
 
   const [selectedDateEntry, setSelectedDateEntry] = useState<Diary>();
+  const [emotionScore, setEmotionScore] = useState(0);
 
   const database = useDatabase();
 
@@ -24,6 +26,12 @@ const Profile = () => {
         .get<Diary>('diaries')
         .query(Q.where('date', Q.eq(formatDateToYYMMDD(new Date(id)))));
       setSelectedDateEntry(fetchedDiary[0]);
+
+      const todayDiary = fetchedDiary[0];
+      const diarySentimentScore = await database
+        .get<Sentiment>('sentiments')
+        .query(Q.where('diary_id', Q.eq(todayDiary.id)));
+      setEmotionScore(diarySentimentScore[0].score);
     };
     fetchDiary();
   }, [database, id]);
@@ -35,7 +43,7 @@ const Profile = () => {
       </View>
       <View style={style.emotionResultSection}>
         <Text style={style.componentTitle}>음성일기 감정분석 결과</Text>
-        <EmotionScore score={1.3} />
+        <EmotionScore score={emotionScore} />
       </View>
       <View style={style.divider} />
       <View style={style.emotionResultSection}>

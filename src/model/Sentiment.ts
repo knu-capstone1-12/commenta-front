@@ -2,12 +2,11 @@ import {Model} from '@nozbe/watermelondb';
 import {Associations} from '@nozbe/watermelondb/Model';
 import {field} from '@nozbe/watermelondb/decorators';
 
-export default class Emotion extends Model {
-  static table = 'emotions';
+export default class Sentiment extends Model {
+  static table = 'sentiments';
   static associations: Associations = {
-    emotions: {type: 'belongs_to', key: 'diary_id'},
+    sentiments: {type: 'belongs_to', key: 'diary_id'},
   };
-  @field('emotionName') emotionName!: string;
-  @field('percentage') percentage!: number;
+  @field('score') score!: number;
   @field('diary_id') diary_id!: string;
 }

@@ -9,16 +9,15 @@ const diarySchema = tableSchema({
   ],
 });
 
-const emotionSchema = tableSchema({
-  name: 'emotions',
+const sentimentSchema = tableSchema({
+  name: 'sentiments',
   columns: [
-    {name: 'emotionName', type: 'string'},
-    {name: 'percentage', type: 'number'},
+    {name: 'score', type: 'number'},
     {name: 'diary_id', type: 'string', isIndexed: true},
   ],
 });
 
 export default appSchema({
   version: 1,
-  tables: [diarySchema, emotionSchema],
+  tables: [diarySchema, sentimentSchema],
 });

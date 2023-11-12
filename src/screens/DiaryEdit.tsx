@@ -19,6 +19,8 @@ import {useDatabase} from '@nozbe/watermelondb/hooks';
 import Diary from 'model/Diary';
 import {Q} from '@nozbe/watermelondb';
 import {formatDateToYYMMDD} from 'util/dateUtil';
+import {REACT_APP_API_URL} from '@env';
+import Sentiment from 'model/Sentiment';
 
 const DiaryEdit = () => {
   const {navigate} = useNavigation();
@@ -35,28 +37,55 @@ const DiaryEdit = () => {
   }, [passedText]);
 
   const handleNextButtonClick = async () => {
-    await database.write(async () =>
-      database
+    try {
+      // 현재 날짜에 해당하는 diaries 삭제
+      const diariesToday = await database
         .get<Diary>('diaries')
         .query(Q.where('date', Q.eq(formatDateToYYMMDD(new Date()))))
-        .then(diaries =>
-          diaries.map(async diary => await diary.destroyPermanently()),
-        )
-        .finally(async () => {
-          let newDiary;
-          try {
-            newDiary = await database.get<Diary>('diaries').create(diary => {
-              diary.title = title;
-              diary.content = mainText;
-              diary.date = formatDateToYYMMDD(new Date());
-            });
-          } catch (e) {
-            console.error(e);
-          }
-          console.log(newDiary);
-          navigate('Home');
-        }),
-    );
+        .fetch();
+
+      await database.write(async () => {
+        await Promise.all(
+          diariesToday.map(diary => diary.destroyPermanently()),
+        );
+      });
+
+      // 새 Diary 레코드 생성
+      let newDiary: Diary;
+      await database.write(async () => {
+        newDiary = await database.get<Diary>('diaries').create(diary => {
+          diary.title = title;
+          diary.content = mainText;
+          diary.date = formatDateToYYMMDD(new Date());
+        });
+      });
+
+      // 감정 점수 계산 및 Sentiment 레코드 생성
+      const {emotionScore: score} = await fetch(
+        `${REACT_APP_API_URL}/senceemotion`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify({
+            content: mainText,
+          }),
+        },
+      )
+        .then(res => res.json() as Promise<{emotionScore: number}>)
+        .catch(() => ({emotionScore: 0}));
+
+      await database.write(async () => {
+        await database.get<Sentiment>('sentiments').create(sentiment => {
+          sentiment.score = parseFloat(score.toFixed(2));
+          sentiment.diary_id = newDiary.id;
+        });
+      });
+      navigate('Home');
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (

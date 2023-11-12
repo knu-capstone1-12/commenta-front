@@ -11,7 +11,7 @@ import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import {DatabaseProvider} from '@nozbe/watermelondb/DatabaseProvider';
 import schema from './src/model/schema';
 import Diary from './src/model/Diary';
-import Emotion from './src/model/Emotion';
+import Sentiment from './src/model/Sentiment';
 
 const adapter = new SQLiteAdapter({
   schema,
@@ -24,7 +24,7 @@ const adapter = new SQLiteAdapter({
 
 const database = new Database({
   adapter,
-  modelClasses: [Diary, Emotion],
+  modelClasses: [Diary, Sentiment],
 });
 
 const Stack = createStackNavigator();
