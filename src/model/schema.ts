@@ -5,7 +5,7 @@ const diarySchema = tableSchema({
   columns: [
     {name: 'title', type: 'string'},
     {name: 'content', type: 'string'},
-    {name: 'date', type: 'string'},
+    {name: 'date', type: 'number', isIndexed: true},
   ],
 });
 
@@ -13,7 +13,7 @@ const sentimentSchema = tableSchema({
   name: 'sentiments',
   columns: [
     {name: 'score', type: 'number'},
-    {name: 'diary_id', type: 'string', isIndexed: true},
+    {name: 'date', type: 'number', isIndexed: true},
   ],
 });
 

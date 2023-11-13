@@ -6,7 +6,7 @@ import {RootStackParamList} from 'types/navigation';
 import {useDatabase} from '@nozbe/watermelondb/hooks';
 import Diary from 'model/Diary';
 import {Q} from '@nozbe/watermelondb';
-import {formatDateToYYMMDD} from 'util/dateUtil';
+import {formatDateToNumber} from 'util/dateUtil';
 import EmotionScore from 'components/EmotionScore';
 import Sentiment from 'model/Sentiment';
 
@@ -22,16 +22,17 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchDiary = async () => {
-      const fetchedDiary = await database
-        .get<Diary>('diaries')
-        .query(Q.where('date', Q.eq(formatDateToYYMMDD(new Date(id)))));
-      setSelectedDateEntry(fetchedDiary[0]);
+      try {
+        const fetchedDiary = await database
+          .get<Diary>('diaries')
+          .query(Q.where('date', Q.eq(formatDateToNumber(new Date(id)))));
+        setSelectedDateEntry(fetchedDiary[0]);
 
-      const todayDiary = fetchedDiary[0];
-      const diarySentimentScore = await database
-        .get<Sentiment>('sentiments')
-        .query(Q.where('diary_id', Q.eq(todayDiary.id)));
-      setEmotionScore(diarySentimentScore[0].score);
+        const diarySentimentScore = await database
+          .get<Sentiment>('sentiments')
+          .query(Q.where('date', Q.eq(formatDateToNumber(new Date(id)))));
+        setEmotionScore(diarySentimentScore[0].score);
+      } catch (e) {}
     };
     fetchDiary();
   }, [database, id]);

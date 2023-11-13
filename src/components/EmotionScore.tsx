@@ -19,7 +19,9 @@ const EmotionScore = ({score}: Props) => {
     <View style={styles.container}>
       <View style={styles.scoreContainer}>
         <Text style={styles.title}>오늘의 감정점수</Text>
-        <Text style={styles.score}>{formatPositiveNumber(score)}</Text>
+        <Text style={styles.score}>
+          {score >= -3 ? formatPositiveNumber(score) : '점수 시스템 에러!'}
+        </Text>
       </View>
       <View style={styles.barContainer}>
         <View style={styles.barScoreContainer}>
@@ -29,7 +31,12 @@ const EmotionScore = ({score}: Props) => {
         </View>
         <View style={styles.barBody}>
           <View
-            style={[styles.barIndicator, {width: 220 * scoreToPercent(score)}]}
+            style={[
+              styles.barIndicator,
+              score >= -3
+                ? {width: 220 * scoreToPercent(score)}
+                : styles.barIndicatorError,
+            ]}
           />
         </View>
       </View>
@@ -75,6 +82,10 @@ const styles = StyleSheet.create({
     borderRadius: 2.5,
     backgroundColor: '#04E762',
     height: 5,
+  },
+  barIndicatorError: {
+    width: 220,
+    backgroundColor: '#FF0000',
   },
 });
 

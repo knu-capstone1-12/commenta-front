@@ -18,7 +18,7 @@ import {RootStackParamList} from 'types/navigation';
 import {useDatabase} from '@nozbe/watermelondb/hooks';
 import Diary from 'model/Diary';
 import {Q} from '@nozbe/watermelondb';
-import {formatDateToYYMMDD} from 'util/dateUtil';
+import {formatDateToNumber} from 'util/dateUtil';
 import {REACT_APP_API_URL} from '@env';
 import Sentiment from 'model/Sentiment';
 
@@ -41,7 +41,7 @@ const DiaryEdit = () => {
       // 현재 날짜에 해당하는 diaries 삭제
       const diariesToday = await database
         .get<Diary>('diaries')
-        .query(Q.where('date', Q.eq(formatDateToYYMMDD(new Date()))))
+        .query(Q.where('date', Q.eq(formatDateToNumber(new Date()))))
         .fetch();
 
       await database.write(async () => {
@@ -51,13 +51,23 @@ const DiaryEdit = () => {
       });
 
       // 새 Diary 레코드 생성
-      let newDiary: Diary;
       await database.write(async () => {
-        newDiary = await database.get<Diary>('diaries').create(diary => {
+        await database.get<Diary>('diaries').create(diary => {
           diary.title = title;
           diary.content = mainText;
-          diary.date = formatDateToYYMMDD(new Date());
+          diary.date = formatDateToNumber(new Date());
         });
+      });
+
+      const sentimentToday = await database
+        .get<Sentiment>('sentiments')
+        .query(Q.where('date', Q.eq(formatDateToNumber(new Date()))))
+        .fetch();
+
+      await database.write(async () => {
+        await Promise.all(
+          sentimentToday.map(diary => diary.destroyPermanently()),
+        );
       });
 
       // 감정 점수 계산 및 Sentiment 레코드 생성
@@ -74,12 +84,12 @@ const DiaryEdit = () => {
         },
       )
         .then(res => res.json() as Promise<{emotionScore: number}>)
-        .catch(() => ({emotionScore: 0}));
+        .catch(() => ({emotionScore: -9999}));
 
       await database.write(async () => {
         await database.get<Sentiment>('sentiments').create(sentiment => {
           sentiment.score = parseFloat(score.toFixed(2));
-          sentiment.diary_id = newDiary.id;
+          sentiment.date = formatDateToNumber(new Date());
         });
       });
       navigate('Home');

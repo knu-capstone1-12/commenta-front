@@ -2,6 +2,7 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {
   formatDateToMonthYear,
+  formatDateToNumber,
   getDaysOfMonth,
   weekDaysList,
 } from 'util/dateUtil';
@@ -11,59 +12,74 @@ import Diary from 'model/Diary';
 import {useDatabase} from '@nozbe/watermelondb/hooks';
 import {Q} from '@nozbe/watermelondb';
 import {useIsFocused} from '@react-navigation/native';
+import {
+  useSelectedDate,
+  useSelectedDateDispatch,
+} from 'contexts/SelectedDateContext';
 
 interface Props {
   onDateClick: (date: Date) => void;
 }
 
 const Calendar = ({onDateClick}: Props) => {
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const {
+    data: {selectedDate},
+  } = useSelectedDate();
+  const dispatch = useSelectedDateDispatch();
   const [thisMonthDiaries, setThisMonthDiaries] = useState<Diary[]>([]);
 
   const database = useDatabase();
   const isFocused = useIsFocused();
 
-  const thisYear = currentDate.getFullYear();
-  const thisMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
-
-  const fetchThisMonthDiaries = useCallback(async () => {
-    const dateString = `${thisYear}-${thisMonth}-__`;
+  const fetchCurrentMonthDiaries = useCallback(async () => {
+    const dayMonthStart = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      1,
+      0,
+      0,
+      0,
+    );
+    const dayMonthEnd = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+      0,
+      0,
+      0,
+      0,
+    );
     let diaries: Diary[] = [];
     try {
       diaries = await database
         .get<Diary>('diaries')
-        .query(Q.where('date', Q.like(dateString)));
+        .query(
+          Q.and(
+            Q.where('date', Q.gte(formatDateToNumber(dayMonthStart))),
+            Q.where('date', Q.lte(formatDateToNumber(dayMonthEnd))),
+          ),
+        );
     } catch (e) {
       console.error('error fetching diary', e);
     }
     setThisMonthDiaries(diaries);
-  }, [database, thisMonth, thisYear]);
+  }, [database, selectedDate]);
 
   useEffect(() => {
     const loadDiaries = async () => {
-      await fetchThisMonthDiaries();
+      await fetchCurrentMonthDiaries();
     };
     loadDiaries();
-  }, [fetchThisMonthDiaries, isFocused]);
+  }, [fetchCurrentMonthDiaries, isFocused]);
 
   const onPrevMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
-    );
+    dispatch({type: 'PREV_MONTH'});
   };
 
   const onNextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
-    );
+    dispatch({type: 'NEXT_MONTH'});
   };
 
-  useEffect(() => {
-    // 캘린더가 처음 렌더링될 때 현재 날짜로 설정합니다.
-    setCurrentDate(new Date());
-  }, []);
-
-  const daysOfMonth = getDaysOfMonth(currentDate);
+  const daysOfMonth = getDaysOfMonth(selectedDate);
 
   return (
     <View style={styles.container}>
@@ -72,7 +88,7 @@ const Calendar = ({onDateClick}: Props) => {
           <LeftArrow width={40} height={40} />
         </TouchableOpacity>
         <Text style={styles.yearAndMonth}>
-          {formatDateToMonthYear(currentDate)}
+          {formatDateToMonthYear(selectedDate)}
         </Text>
         <TouchableOpacity key="nextButton" onPress={onNextMonth}>
           <RightArrow width={40} height={40} />
@@ -95,8 +111,8 @@ const Calendar = ({onDateClick}: Props) => {
                     onPress={() =>
                       onDateClick(
                         new Date(
-                          currentDate.getFullYear(),
-                          currentDate.getMonth(),
+                          selectedDate.getFullYear(),
+                          selectedDate.getMonth(),
                           day,
                         ),
                       )
@@ -105,13 +121,16 @@ const Calendar = ({onDateClick}: Props) => {
                       style={[
                         styles.dayText,
                         thisMonthDiaries &&
-                          thisMonthDiaries.some(diary =>
-                            new RegExp(
-                              `${thisYear}-${thisMonth}-${String(day).padStart(
-                                2,
-                                '0',
-                              )}`,
-                            ).test(diary.date),
+                          thisMonthDiaries.some(
+                            diary =>
+                              diary.date ===
+                              formatDateToNumber(
+                                new Date(
+                                  selectedDate.getFullYear(),
+                                  selectedDate.getMonth(),
+                                  day,
+                                ),
+                              ),
                           ) &&
                           styles.hasDiary,
                       ]}>
